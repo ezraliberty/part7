@@ -17,7 +17,6 @@ const useField = (type) => {
 
 const useCountry = (name) => {
   const [country, setCountry] = useState(null);
-  const [error, setError] = useState(null);
 
   useEffect(() => {
     if (name.length < 1) {
@@ -25,31 +24,15 @@ const useCountry = (name) => {
     }
     axios
       .get(`https://studies.cs.helsinki.fi/restcountries/api/name/${name}`)
-      .then((response) => {
-        if (response.data) {
-          setCountry(response.data);
-          setError(null);
-        }
-      })
-      .catch((error) => {
-        setCountry(null);
-        setError(error.response.data.error);
-      });
-    // console.log('effect: ',typeof country)
-    // setCountry(country)
+      .then((response) => setCountry(response.data))
+      .catch((err) => setCountry(null));
   }, [name]);
 
   return country;
 };
 
 const Country = ({ country }) => {
-  if (!country) {
-    return null;
-  }
-
-  console.log(country);
-
-  if (!country.found) {
+  if (country === null) {
     return <div>not found...</div>;
   }
 
