@@ -37,4 +37,12 @@ export async function fetchBlogs(dispatch, getState) {
   dispatch({ type: 'blogs/blogsLoaded', payload: response.data })
 }
 
+export function newBlog(post) {
+  return async function saveBlog(dispatch, getState) {
+    const newBlog = { post }
+    const response = await axios.post('http://localhost:3003/api/blogs', { post: newBlog })
+    dispatch({ type:'blogs/blogAdded', payload: response.post })
+  }
+}
+
 export default blogReducer

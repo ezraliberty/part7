@@ -7,18 +7,20 @@ import Toggle from './components/Toggle'
 import blogService from './services/blogs'
 import signinService from './services/signin'
 import { useSelector, useDispatch } from 'react-redux'
-import { createNotification } from './reducers/notifyReducer'
+import { showNotification } from './reducers/notifyReducer'
+import { newBlog } from './reducers/blogReducer'
 
 const App = () => {
-  const [blogs, setBlogs] = useState([])
+  // const [blogs, setBlogs] = useState([])
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
   const dispatch = useDispatch()
-  const notification = useSelector(state => state)
+  const notification = useSelector(state => state.notification)
+  const blogs = useSelector(state => state.blogs.blogs)
 
   useEffect(() => {
-    blogService.getAll().then(blog => setBlogs(blog))
+    // blogService.getAll().then(blog => setBlogs(blog))
   }, [])
 
   useEffect(() => {
@@ -42,16 +44,9 @@ const App = () => {
       setUser(user)
       setUsername('')
       setPassword('')
-      dispatch(createNotification('Login Success', true))
-      setTimeout(() => {
-        dispatch(createNotification(null))
-      }, 5000)
+      dispatch(showNotification('Login Success', true))
     } catch (exception) {
-      console.log(exception.response.data.error)
-      dispatch(createNotification(`${exception.response.data.error}`))
-      setTimeout(() => {
-        dispatch(createNotification(null))
-      }, 5000)
+      dispatch(showNotification(`${exception.response.data.error}`, false))
     }
   }
 
@@ -60,31 +55,19 @@ const App = () => {
       blogFormRef.current.toggleVisibility()
       await blogService.newPost(createBlog)
       const returnedPost = await blogService.getAll()
-      setBlogs(returnedPost)
-      dispatch(createNotification(
+      dispatch(newBlog(returnedPost))
+      dispatch(showNotification(
         `A new Blog ${returnedPost.title} by ${returnedPost.author} added`
         , true))
-      setTimeout(() => {
-        dispatch(createNotification(null))
-      }, 5000)
     } catch (exception) {
-      console.log(exception.response.data.error)
-      setPassed()
-      setNotify(`${exception.response.data.error}`)
-      setTimeout(() => {
-        setNotify(null)
-      }, 5000)
+      dispatch(showNotification(`${exception.response.data.error}`))
     }
   }
 
   const handleLogout = () => {
     window.localStorage.clear()
     window.location.reload()
-    setPassed()
-    setNotify('logout success')
-    setTimeout(() => {
-      setNotify(null)
-    }, 5000)
+    dispatch(showNotification('logout success'))
   }
 
   const deletePost = async (blog) => {
@@ -93,19 +76,10 @@ const App = () => {
         await blogService.deleter(blog.id)
         const updatedBlogs = blogs.filter((item) => item.id !== blog.id)
         setBlogs(updatedBlogs)
-
-        setPassed(true)
-        setNotify('Operation Successful')
-        setTimeout(() => {
-          setNotify(null)
-        }, 5000)
+        dispatch(showNotification('Operation Successful'))
       }
     } catch (error) {
-      setPassed()
-      setNotify('Failed')
-      setTimeout(() => {
-        setNotify(null)
-      }, 5000)
+      dispatch(showNotification('Failed'))
     }
   }
 
@@ -129,7 +103,7 @@ const App = () => {
       )
       setBlogs(updatedBlogs)
     } catch (error) {
-      setNotify('Failed to update likes')
+      dispatch(showNotification('Failed to update likes'))
     }
   }
 

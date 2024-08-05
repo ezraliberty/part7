@@ -5,6 +5,8 @@ import App from './App'
 import store from './reducers/store'
 import { fetchBlogs } from './reducers/blogReducer'
 
+import './index.css'
+
 store.dispatch(fetchBlogs)
 
 const root = createRoot(document.getElementById('root'))
