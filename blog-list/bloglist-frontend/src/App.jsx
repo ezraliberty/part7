@@ -8,7 +8,8 @@ import blogService from './services/blogs'
 import signinService from './services/signin'
 import { useSelector, useDispatch } from 'react-redux'
 import { showNotification } from './reducers/notifyReducer'
-import { newBlog } from './reducers/blogReducer'
+import { newBlog, likeBlog, deleteBlog } from './reducers/blogReducer'
+import storage from './services/storage'
 
 const App = () => {
   // const [blogs, setBlogs] = useState([])
@@ -28,7 +29,7 @@ const App = () => {
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
       setUser(user)
-      blogService.setToken(user.token)
+      // blogService.setToken(user.token)
     }
   }, [])
 
@@ -38,9 +39,9 @@ const App = () => {
     event.preventDefault()
     try {
       const user = await signinService.signin({ username, password })
-
-      window.localStorage.setItem('loggedBlogUser', JSON.stringify(user))
-      blogService.setToken(user.token)
+      storage.saveUser(user)
+      // window.localStorage.setItem('loggedBlogUser', JSON.stringify(user))
+      // blogService.setToken(user.token)
       setUser(user)
       setUsername('')
       setPassword('')
@@ -53,11 +54,11 @@ const App = () => {
   const newPost = async (createBlog) => {
     try {
       blogFormRef.current.toggleVisibility()
-      await blogService.newPost(createBlog)
-      const returnedPost = await blogService.getAll()
-      dispatch(newBlog(returnedPost))
+      dispatch(newBlog(createBlog))
+      // await blogService.newPost(createBlog)
+      // const returnedPost = await blogService.getAll()
       dispatch(showNotification(
-        `A new Blog ${returnedPost.title} by ${returnedPost.author} added`
+        `A new Blog ${createBlog.title} by ${createBlog.author} added`
         , true))
     } catch (exception) {
       dispatch(showNotification(`${exception.response.data.error}`))
@@ -73,9 +74,10 @@ const App = () => {
   const deletePost = async (blog) => {
     try {
       if (window.confirm(`Remove post ${blog.title} by ${blog.author}`)) {
-        await blogService.deleter(blog.id)
-        const updatedBlogs = blogs.filter((item) => item.id !== blog.id)
-        setBlogs(updatedBlogs)
+        dispatch(deleteBlog(blog.id))
+        // await blogService.deleter(blog.id)
+        // const updatedBlogs = blogs.filter((item) => item.id !== blog.id)
+        // setBlogs(updatedBlogs)
         dispatch(showNotification('Operation Successful'))
       }
     } catch (error) {
@@ -97,11 +99,12 @@ const App = () => {
 
   const addLikes = async (id) => {
     try {
-      const liker = await blogService.updateLikes(id)
-      const updatedBlogs = blogs.map((blog) =>
-        blog.id === id ? { ...blog, likes: liker.likes } : blog
-      )
-      setBlogs(updatedBlogs)
+      dispatch(likeBlog(id))
+      // // const liker = await blogService.updateLikes(id)
+      // const updatedBlogs = blogs.map((blog) =>
+      //   blog.id === id ? { ...blog, likes: liker.likes } : blog
+      // )
+      // setBlogs(updatedBlogs)
     } catch (error) {
       dispatch(showNotification('Failed to update likes'))
     }
