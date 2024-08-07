@@ -10,6 +10,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { showNotification } from './reducers/notifyReducer'
 import { newBlog, likeBlog, deleteBlog } from './reducers/blogReducer'
 import storage from './services/storage'
+import { signIn } from './reducers/userReducer'
 
 const App = () => {
   // const [blogs, setBlogs] = useState([])
@@ -38,7 +39,8 @@ const App = () => {
   const handleLogin = async (event) => {
     event.preventDefault()
     try {
-      const user = await signinService.signin({ username, password })
+      dispatch(signIn({ username, password }))
+      // const user = await signinService.signin({ username, password })
       storage.saveUser(user)
       // window.localStorage.setItem('loggedBlogUser', JSON.stringify(user))
       // blogService.setToken(user.token)
