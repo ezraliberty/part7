@@ -1,23 +1,29 @@
 import React from 'react'
-import { createRoot } from 'react-dom/client'
-import { Provider } from 'react-redux'
+import ReactDOM from 'react-dom/client'
 import App from './App'
-import store from './reducers/store'
-import { fetchBlogs } from './reducers/blogReducer'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 import './index.css'
 
-store.dispatch(fetchBlogs)
+const queryClient = new QueryClient()
 
-const root = createRoot(document.getElementById('root'))
-
-root.render(
-  <React.StrictMode>
-    <Provider store={store}>
-      <App />
-    </Provider>
-  </React.StrictMode>
+ReactDOM.createRoot(document.getElementById('root')).render(
+  <QueryClientProvider client={queryClient}>
+    <App />
+  </QueryClientProvider>
 )
+
+// store.dispatch(fetchBlogs)
+
+// const root = createRoot(document.getElementById('root'))
+
+// root.render(
+//   <React.StrictMode>
+//     <Provider store={store}>
+//       <App />
+//     </Provider>
+//   </React.StrictMode>
+// )
 
 // import ReactDOM from 'react-dom/client'
 // import { createStore, applyMiddleware } from 'redux'
