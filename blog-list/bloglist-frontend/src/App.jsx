@@ -6,20 +6,21 @@ import NewBlog from './components/NewBlog'
 import Toggle from './components/Toggle'
 import blogService from './services/blogs'
 import signinService from './services/signin'
-import { useSelector, useDispatch } from 'react-redux'
-import { showNotification } from './reducers/notifyReducer'
-import { newBlog, likeBlog, deleteBlog } from './reducers/blogReducer'
+// import { useSelector, useDispatch } from 'react-redux'
+// import { showNotification } from './context/notifyReducer'
+import { newBlog, likeBlog, deleteBlog } from './context/blogReducer'
 import storage from './services/storage'
-import { signIn } from './reducers/userReducer'
+import { signIn } from './context/userReducer'
+import { useNotification } from './context/notifyReducer'
 
 const App = () => {
-  // const [blogs, setBlogs] = useState([])
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
-  const dispatch = useDispatch()
-  const notification = useSelector(state => state.notification)
-  const blogs = useSelector(state => state.blogs.blogs)
+  const { showNotification } = useNotification()
+  // const dispatch = useDispatch()
+  // const notification = useSelector(state => state.notification)
+  // const blogs = useSelector(state => state.blogs.blogs)
 
   useEffect(() => {
     // blogService.getAll().then(blog => setBlogs(blog))
@@ -47,7 +48,7 @@ const App = () => {
       setUser(user)
       setUsername('')
       setPassword('')
-      dispatch(showNotification('Login Success', true))
+      showNotification('Login Success', true)
     } catch (exception) {
       dispatch(showNotification(`${exception.response.data.error}`, false))
     }
