@@ -19,8 +19,10 @@ import {
   newBlogPost,
   updateLikes,
   deleter,
+  getUsers
 } from './services/requests'
 import UserContext from './UserContext'
+import User from './components/User'
 
 
 const App = () => {
@@ -74,12 +76,25 @@ const App = () => {
     queryFn: getBlogs,
   })
 
+  const userResult = useQuery({
+    queryKey: ['users'],
+    queryFn: getUsers,
+  })
+
+  if (userResult.isLoading) {
+    return <div>Incoming Data....</div>
+  }
+
+  const users = userResult.data
+  console.log('users app.js: ', users)
+
   if (result.isLoading) {
     return <div>Incoming Data....</div>
   }
 
   const blogs = result.data
 
+  
   // useEffect(() => {
   //   const loggedUserJSON = window.localStorage.getItem('loggedBlogUser')
   //   if (loggedUserJSON) {
@@ -178,6 +193,8 @@ const App = () => {
       <Toggle buttonLabel="New Post" ref={blogFormRef}>
         <NewBlog createBlog={newPost} />
       </Toggle>
+      <h2>Users</h2>
+      {users.map(user => <User key={user.username} user={user.username} blog={user.blogsCount} />)}
       {blogs
         .sort((a, b) => b.likes - a.likes)
         .map((blog) => (

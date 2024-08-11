@@ -1,5 +1,5 @@
 import axios from 'axios'
-const baseUrl = '/api/blogs'
+const baseUrl = '/api/users'
 import storage from './storage'
 
 const userData = () => ({
@@ -7,6 +7,8 @@ const userData = () => ({
 })
 
 const config = userData()
+
+export const getUsers = () => axios.get('/api/userDetails').then(res => res.data)
 
 export const signin = credentials => axios.post('/api/signin', credentials).then(res => res.data)
 
