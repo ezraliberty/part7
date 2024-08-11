@@ -12,12 +12,51 @@ import { newBlog, likeBlog, deleteBlog } from './context/blogReducer'
 import storage from './services/storage'
 import { signIn } from './context/userReducer'
 import { useNotification } from './context/notifyReducer'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import {
+  getBlogs,
+  signin,
+  newBlogPost,
+  updateLikes,
+  deleter,
+} from './services/requests'
 
 const App = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
   const { showNotification } = useNotification()
+  const queryClient = useQueryClient()
+
+  const newBlogMutation = useMutation({
+    mutationFn: newBlogPost,
+    onSuccess: (createBlog) => {
+      const blogs = queryClient.getQueryData(['blogs'])
+      queryClient.setQueryData(['blogs'], blogs.concat(createBlog))
+    },
+  })
+
+  const updateBlogMutation = useMutation({
+    mutationFn: updateLikes,
+    onSuccess: (liked) => {
+      const blogs = queryClient.getQueryData(['blogs'])
+      const updatedBlogs = blogs.map((blog) =>
+        blog.id === liked.id ? { ...blog, likes: liked.likes } : blog
+      )
+
+      queryClient.setQueryData(['blogs'], updatedBlogs)
+    },
+  })
+
+  const deleteBlogMutation = useMutation({
+    mutationFn: deleter,
+    onSuccess: (id) => {
+      const blogs = queryClient.getQueryData(['blogs'])
+
+      const updatedBlogs = blogs.filter((blog) => blog.id !== id)
+      queryClient.setQueryData(['blogs', updatedBlogs])
+    },
+  })
   // const dispatch = useDispatch()
   // const notification = useSelector(state => state.notification)
   // const blogs = useSelector(state => state.blogs.blogs)
@@ -26,21 +65,32 @@ const App = () => {
     // blogService.getAll().then(blog => setBlogs(blog))
   }, [])
 
-  useEffect(() => {
-    const loggedUserJSON = window.localStorage.getItem('loggedBlogUser')
-    if (loggedUserJSON) {
-      const user = JSON.parse(loggedUserJSON)
-      setUser(user)
-      // blogService.setToken(user.token)
-    }
-  }, [])
+  const result = useQuery({
+    queryKey: ['blogs'],
+    queryFn: getBlogs,
+  })
+
+  if (result.isLoading) {
+    return <div>Incoming Data....</div>
+  }
+
+  const blogs = result.data
+
+  // useEffect(() => {
+  //   const loggedUserJSON = window.localStorage.getItem('loggedBlogUser')
+  //   if (loggedUserJSON) {
+  //     const user = JSON.parse(loggedUserJSON)
+  //     setUser(user)
+  //     // blogService.setToken(user.token)
+  //   }
+  // }, [])
 
   const blogFormRef = useRef()
 
   const handleLogin = async (event) => {
     event.preventDefault()
     try {
-      dispatch(signIn({ username, password }))
+      signin({ username, password })
       // const user = await signinService.signin({ username, password })
       storage.saveUser(user)
       // window.localStorage.setItem('loggedBlogUser', JSON.stringify(user))
@@ -57,12 +107,16 @@ const App = () => {
   const newPost = async (createBlog) => {
     try {
       blogFormRef.current.toggleVisibility()
-      dispatch(newBlog(createBlog))
+      newBlogMutation.mutate(createBlog)
+      // dispatch(newBlog(createBlog))
       // await blogService.newPost(createBlog)
       // const returnedPost = await blogService.getAll()
-      dispatch(showNotification(
-        `A new Blog ${createBlog.title} by ${createBlog.author} added`
-        , true))
+      dispatch(
+        showNotification(
+          `A new Blog ${createBlog.title} by ${createBlog.author} added`,
+          true
+        )
+      )
     } catch (exception) {
       dispatch(showNotification(`${exception.response.data.error}`))
     }
@@ -77,7 +131,8 @@ const App = () => {
   const deletePost = async (blog) => {
     try {
       if (window.confirm(`Remove post ${blog.title} by ${blog.author}`)) {
-        dispatch(deleteBlog(blog.id))
+        deleteBlogMutation.mutate(blog.id)
+        // dispatch(deleteBlog(blog.id))
         // await blogService.deleter(blog.id)
         // const updatedBlogs = blogs.filter((item) => item.id !== blog.id)
         // setBlogs(updatedBlogs)
@@ -102,8 +157,9 @@ const App = () => {
 
   const addLikes = async (id) => {
     try {
-      dispatch(likeBlog(id))
-      // // const liker = await blogService.updateLikes(id)
+      updateBlogMutation.mutate(id)
+      // dispatch(likeBlog(id))
+      // const liker = await blogService.updateLikes(id)
       // const updatedBlogs = blogs.map((blog) =>
       //   blog.id === id ? { ...blog, likes: liker.likes } : blog
       // )
@@ -114,7 +170,6 @@ const App = () => {
   }
 
   // const checker = (blog) => blog.user.username === user.username
-
 
   const blogsList = () => (
     <div>
