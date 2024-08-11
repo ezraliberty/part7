@@ -1,4 +1,4 @@
-import { useNotification } from '../context/notifyReducer'
+import { useNotification } from '../NotificationContext'
 
 const Notification = () => {
   const { state } = useNotification()

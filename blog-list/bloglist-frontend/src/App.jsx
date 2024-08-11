@@ -1,17 +1,17 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useContext } from 'react'
 import Blog from './components/Blog'
 import Notification from './components/Notification'
 import LoginForm from './components/LoginForm'
 import NewBlog from './components/NewBlog'
 import Toggle from './components/Toggle'
-import blogService from './services/blogs'
-import signinService from './services/signin'
+// import blogService from './services/blogs'
+// import signinService from './services/signin'
 // import { useSelector, useDispatch } from 'react-redux'
 // import { showNotification } from './context/notifyReducer'
-import { newBlog, likeBlog, deleteBlog } from './context/blogReducer'
+// import { newBlog, likeBlog, deleteBlog } from './context/blogReducer'
 import storage from './services/storage'
-import { signIn } from './context/userReducer'
-import { useNotification } from './context/notifyReducer'
+// import { signIn } from './context/userReducer'
+import { useNotification } from './NotificationContext'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   getBlogs,
@@ -20,13 +20,17 @@ import {
   updateLikes,
   deleter,
 } from './services/requests'
+import UserContext from './UserContext'
+
 
 const App = () => {
+  const blogFormRef = useRef()
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const [user, setUser] = useState(null)
+  // const [user, setUser] = useState(null)
   const { showNotification } = useNotification()
   const queryClient = useQueryClient()
+  const { user, userDispatch } = useContext(UserContext)
 
   const newBlogMutation = useMutation({
     mutationFn: newBlogPost,
@@ -85,22 +89,22 @@ const App = () => {
   //   }
   // }, [])
 
-  const blogFormRef = useRef()
 
   const handleLogin = async (event) => {
     event.preventDefault()
     try {
-      signin({ username, password })
-      // const user = await signinService.signin({ username, password })
+      // signin({ username, password })
+      const user = await signin({ username, password })
+      userDispatch({ type: 'USER', payload: user })
       storage.saveUser(user)
       // window.localStorage.setItem('loggedBlogUser', JSON.stringify(user))
       // blogService.setToken(user.token)
-      setUser(user)
+      // setUser(user)
       setUsername('')
       setPassword('')
       showNotification('Login Success', true)
     } catch (exception) {
-      dispatch(showNotification(`${exception.response.data.error}`, false))
+      showNotification(`${exception.response.data.error}`, false)
     }
   }
 
@@ -111,14 +115,12 @@ const App = () => {
       // dispatch(newBlog(createBlog))
       // await blogService.newPost(createBlog)
       // const returnedPost = await blogService.getAll()
-      dispatch(
-        showNotification(
-          `A new Blog ${createBlog.title} by ${createBlog.author} added`,
-          true
-        )
+      showNotification(
+        `A new Blog ${createBlog.title} by ${createBlog.author} added`,
+        true
       )
     } catch (exception) {
-      dispatch(showNotification(`${exception.response.data.error}`))
+      showNotification(`${exception.response.data.error}`)
     }
   }
 
@@ -136,10 +138,10 @@ const App = () => {
         // await blogService.deleter(blog.id)
         // const updatedBlogs = blogs.filter((item) => item.id !== blog.id)
         // setBlogs(updatedBlogs)
-        dispatch(showNotification('Operation Successful'))
+        showNotification('Operation Successful')
       }
     } catch (error) {
-      dispatch(showNotification('Failed'))
+      showNotification('Failed')
     }
   }
 
@@ -165,7 +167,7 @@ const App = () => {
       // )
       // setBlogs(updatedBlogs)
     } catch (error) {
-      dispatch(showNotification('Failed to update likes'))
+      showNotification('Failed to update likes')
     }
   }
 
@@ -196,7 +198,7 @@ const App = () => {
 
   return (
     <div>
-      <Notification notification={notification} />
+      <Notification />
       {!user && loginForm()}
       {user && blogsList()}
     </div>

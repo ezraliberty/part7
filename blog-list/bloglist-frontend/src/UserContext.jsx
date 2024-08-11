@@ -3,7 +3,7 @@ import { createContext, useReducer } from 'react'
 const userReducer = (state, action) => {
   switch (action.type) {
   case 'USER':
-    return state
+    return action.payload
   default:
     return state
   }
@@ -12,10 +12,10 @@ const userReducer = (state, action) => {
 const UserContext = createContext()
 
 export const UserContextProvider = (props) => {
-  const [user, userDispatch] = useReducer(userReducer)
+  const [user, userDispatch] = useReducer(userReducer, null)
 
   return (
-    <UserContext.Provider value={{ user }}>
+    <UserContext.Provider value={{ user, userDispatch }}>
       {props.children}
     </UserContext.Provider>
   )
