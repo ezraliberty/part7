@@ -93,13 +93,9 @@ const App = () => {
   const handleLogin = async (event) => {
     event.preventDefault()
     try {
-      // signin({ username, password })
       const user = await signin({ username, password })
       userDispatch({ type: 'USER', payload: user })
       storage.saveUser(user)
-      // window.localStorage.setItem('loggedBlogUser', JSON.stringify(user))
-      // blogService.setToken(user.token)
-      // setUser(user)
       setUsername('')
       setPassword('')
       showNotification('Login Success', true)

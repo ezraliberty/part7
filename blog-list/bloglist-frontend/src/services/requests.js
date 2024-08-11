@@ -2,11 +2,13 @@ import axios from 'axios'
 const baseUrl = '/api/blogs'
 import storage from './storage'
 
-const config = () => ({
+const userData = () => ({
   headers: { Authorization: `Bearer ${storage.getUser().token}` },
 })
 
-export const signin = credentials => axios.post(baseUrl, credentials).then(res => res.data)
+const config = userData()
+
+export const signin = credentials => axios.post('/api/signin', credentials).then(res => res.data)
 
 export const getBlogs = () => axios.get(baseUrl).then(res => res.data)
 

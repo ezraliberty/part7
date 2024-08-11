@@ -23,20 +23,18 @@ const notifyReducer = (state = initialState, action) => {
 
 const NotificationContext = createContext()
 
-const showNotification = (message, passed = false, timeout = 5) => {
-  return (dispatch) => {
-    dispatch({ type: 'NOTIFICATION', payload: { message, passed } })
-    setTimeout(() => {
-      dispatch({ type: 'RESET' })
-    }, timeout * 1000) // Convert timeout to milliseconds
-  }
-}
-
 export const NotificationProvider = ({ children }) => {
   const [state, dispatch] = useReducer(notifyReducer, initialState)
 
+  const showNotification = (message, passed = false, timeout = 5) => {
+    dispatch({ type: 'NOTIFICATION', payload: { message, passed } })
+    setTimeout(() => {
+      dispatch({ type: 'RESET' })
+    }, timeout * 1000)
+  }
+
   return (
-    <NotificationContext.Provider value={{ state, dispatch }}>
+    <NotificationContext.Provider value={{ state, showNotification }}>
       {children}
     </NotificationContext.Provider>
   )

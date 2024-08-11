@@ -3,7 +3,6 @@ import { useNotification } from '../NotificationContext'
 const Notification = () => {
   const { state } = useNotification()
 
-  // const { message, passed } = notification
   if (state.message === null) {
     return null
   }
