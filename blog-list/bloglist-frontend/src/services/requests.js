@@ -8,11 +8,11 @@ const userData = () => ({
 
 const config = userData()
 
-export const getUsers = () => axios.get('/api/userDetails').then(res => res.data)
+export const getUsers = () => axios.get(baseUrl).then(res => res.data)
 
 export const signin = credentials => axios.post('/api/signin', credentials).then(res => res.data)
 
-export const getBlogs = () => axios.get(baseUrl).then(res => res.data)
+export const getBlogs = () => axios.get('/api/blogs').then(res => res.data)
 
 export const newBlogPost = (newContent) => axios.post(baseUrl, newContent, config).then(res => res.data)
 

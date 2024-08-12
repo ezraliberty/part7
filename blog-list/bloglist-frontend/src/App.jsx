@@ -194,7 +194,7 @@ const App = () => {
         <NewBlog createBlog={newPost} />
       </Toggle>
       <h2>Users</h2>
-      {users.map(user => <User key={user.username} user={user.username} blog={user.blogsCount} />)}
+      {users.map(user => <User key={user.username} username={user.username} blogsCount={user.blogs.length} />)}
       {blogs
         .sort((a, b) => b.likes - a.likes)
         .map((blog) => (
