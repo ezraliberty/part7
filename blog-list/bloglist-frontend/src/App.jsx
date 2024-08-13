@@ -22,7 +22,7 @@ import {
   getUsers
 } from './services/requests'
 import UserContext from './UserContext'
-import User from './components/User'
+import User from './components/Users'
 
 
 const App = () => {
@@ -194,6 +194,7 @@ const App = () => {
         <NewBlog createBlog={newPost} />
       </Toggle>
       <h2>Users</h2>
+      <h4>Blogs Created</h4>
       {users.map(user => <User key={user.username} username={user.username} blogsCount={user.blogs.length} />)}
       {blogs
         .sort((a, b) => b.likes - a.likes)
