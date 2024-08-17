@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 
-const User = ({ username, blogsCount }) => {
+const User = () => {
   return (
     <div>
       <p>one</p>
