@@ -9,8 +9,8 @@ usersRoutes.get("/", async (request, response) => {
 });
 
 usersRoutes.get("/:id", async (request, response) => {
-  const users = await User.find({}).populate("user", { username: 1, name: 1 });
-  response.json(users);
+  const user = await User.findById(request.params.id).populate("blogs", { title: 1 });
+  response.json(user);
 });
 
 usersRoutes.post("/", async (request, response) => {

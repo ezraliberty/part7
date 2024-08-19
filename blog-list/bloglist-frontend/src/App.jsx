@@ -76,33 +76,12 @@ const App = () => {
     queryFn: getBlogs,
   })
 
-  const userResult = useQuery({
-    queryKey: ['users'],
-    queryFn: getUsers,
-  })
-
-  if (userResult.isLoading) {
-    return <div>Incoming Data....</div>
-  }
-
-  const users = userResult.data
-  console.log('users app.js: ', users)
 
   if (result.isLoading) {
     return <div>Incoming Data....</div>
   }
 
   const blogs = result.data
-
-  
-  // useEffect(() => {
-  //   const loggedUserJSON = window.localStorage.getItem('loggedBlogUser')
-  //   if (loggedUserJSON) {
-  //     const user = JSON.parse(loggedUserJSON)
-  //     setUser(user)
-  //     // blogService.setToken(user.token)
-  //   }
-  // }, [])
 
 
   const handleLogin = async (event) => {
@@ -193,9 +172,6 @@ const App = () => {
       <Toggle buttonLabel="New Post" ref={blogFormRef}>
         <NewBlog createBlog={newPost} />
       </Toggle>
-      <h2>Users</h2>
-      <h4>Blogs Created</h4>
-      {users.map(user => <User key={user.username} username={user.username} blogsCount={user.blogs.length} />)}
       {blogs
         .sort((a, b) => b.likes - a.likes)
         .map((blog) => (
