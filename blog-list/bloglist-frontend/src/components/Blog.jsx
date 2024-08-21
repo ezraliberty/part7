@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 
-const Blog = ({ blog, remove, addLikes, user }) => {
+const Blog = ({ blog, remove, addLikes, user, id }) => {
   const [view, setView] = useState(false)
 
   const hideDetails = { display: view ? 'none' : '' }
@@ -16,7 +16,7 @@ const Blog = ({ blog, remove, addLikes, user }) => {
   return (
     <div>
       <div style={hideDetails} className="first">
-        <Link to={''}>
+        <Link to={`/blogs/${id}`}>
           {blog.title} {blog.author}
         </Link>
       </div>
