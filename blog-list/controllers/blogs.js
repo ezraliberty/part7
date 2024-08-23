@@ -7,6 +7,11 @@ blogRoutes.get("/", async (request, response) => {
   response.json(blogs);
 });
 
+blogRoutes.get("/:id", async (request, response) => {
+  const blog = await Blog.findById(request.params.id);
+  response.json(blog);
+});
+
 blogRoutes.post("/", userExtractor, async (request, response) => {
   const body = request.body;
   const user = request.user;

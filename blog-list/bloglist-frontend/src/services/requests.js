@@ -16,6 +16,8 @@ export const signin = credentials => axios.post('/api/signin', credentials).then
 
 export const getBlogs = () => axios.get('/api/blogs').then(res => res.data)
 
+export const getBlog = (id) => axios.get(`/api/blogs/${id}`).then(res => res.data)
+
 export const newBlogPost = (newContent) => axios.post(baseUrl, newContent, config).then(res => res.data)
 
 export const updateLikes = (id) => axios.put(`${baseUrl}/${id}/likes`, {}, config).then(res => res.data)
