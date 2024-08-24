@@ -1,19 +1,52 @@
 import { useEffect, useState } from 'react'
-import { getBlog } from '../services/requests'
+import { getBlog, updateLikes, deleter } from '../services/requests'
 import { params } from 'react-router-dom'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useNotification } from './NotificationContext'
+
 
 const SingleBlog = () => {
   const { id } = params()
-  const [blog, setBlog] = useState([])
+  const queryClient = useQueryClient()
+  const { showNotification } = useNotification()
 
-  useEffect(() => {
-    const blog = async () => {
-      const getB = await getBlog(id)
-      setBlog(getB)
+
+  const result = useQuery({
+    queryKey: ['blogs'],
+    queryFn: () => getBlog(id),
+  })
+
+  const updateBlogMutation = useMutation({
+    mutationFn: updateLikes,
+    onSuccess: (liked) => {
+      const blogs = queryClient.getQueryData(['blogs'])
+      const updatedBlogs = blogs.map((blog) =>
+        blog.id === liked.id ? { ...blog, likes: liked.likes } : blog
+      )
+
+      queryClient.setQueryData(['blogs'], updatedBlogs)
+    },
+  })
+
+  const deleteBlogMutation = useMutation({
+    mutationFn: deleter,
+    onSuccess: (id) => {
+      const blogs = queryClient.getQueryData(['blogs'])
+
+      const updatedBlogs = blogs.filter((blog) => blog.id !== id)
+      queryClient.setQueryData(['blogs', updatedBlogs])
+    },
+  })
+
+  const addLikes = async (id) => {
+    try {
+      updateBlogMutation.mutate(id)
+    } catch (error) {
+      showNotification('Failed to update likes')
     }
+  }
 
-    blog()
-  },[])
+  const blog = result.data
 
   return (
     <div>
