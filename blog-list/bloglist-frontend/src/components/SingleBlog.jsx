@@ -10,7 +10,6 @@ const SingleBlog = () => {
   const queryClient = useQueryClient()
   const { showNotification } = useNotification()
 
-
   const result = useQuery({
     queryKey: ['blogs'],
     queryFn: () => getBlog(id),
@@ -42,7 +41,7 @@ const SingleBlog = () => {
     try {
       updateBlogMutation.mutate(id)
     } catch (error) {
-      showNotification('Failed to update likes')
+      showNotification('Failed to update likes!')
     }
   }
 
