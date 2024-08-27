@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react'
 import { getBlog, updateLikes, deleter } from '../services/requests'
-import { params } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { useNotification } from './NotificationContext'
+import { useNotification } from '../NotificationContext'
 
 
 const SingleBlog = () => {
-  const { id } = params()
+  const { id } = useParams()
   const queryClient = useQueryClient()
   const { showNotification } = useNotification()
 
