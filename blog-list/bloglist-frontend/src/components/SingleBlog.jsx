@@ -18,12 +18,16 @@ const SingleBlog = () => {
   const updateBlogMutation = useMutation({
     mutationFn: updateLikes,
     onSuccess: (liked) => {
-      const blogs = queryClient.getQueryData(['blogs'])
-      const updatedBlogs = blogs.map((blog) =>
-        blog.id === liked.id ? { ...blog, likes: liked.likes } : blog
-      )
+      // console.log(liked)
+      // const blogs = queryClient.getQueryData(['blogs'])
+      // console.log('blogs', blogs)
+      // const updatedBlogs = blogs.map((blog) =>
+      //   blog.id === liked.id ? { ...blog, likes: liked.likes } : blog
+      // )
 
-      queryClient.setQueryData(['blogs'], updatedBlogs)
+      // console.log('update', updatedBlogs)
+
+      queryClient.setQueryData(['blogs'], liked)
     },
   })
 

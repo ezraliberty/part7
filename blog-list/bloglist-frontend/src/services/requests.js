@@ -20,6 +20,6 @@ export const getBlog = (id) => axios.get(`/api/blogs/${id}`).then(res => res.dat
 
 export const newBlogPost = (newContent) => axios.post(baseUrl, newContent, config).then(res => res.data)
 
-export const updateLikes = (id) => axios.put(`${baseUrl}/${id}/likes`, {}, config).then(res => res.data)
+export const updateLikes = (id) => axios.put(`/api/blogs/${id}/likes`, {}, config).then(res => res.data)
 
 export const deleter = (id) => axios.delete(`${baseUrl}/${id}`, config).then(res => res)
