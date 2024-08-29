@@ -1,13 +1,13 @@
 import { useState } from 'react'
 
-const NewBlog = ({ createBlog }) => {
+const NewBlog = ({ newBlogMutation }) => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
 
   const handleSubmit = (event) => {
     event.preventDefault()
-    createBlog({
+    newBlogMutation.mutate({
       title: title,
       author: author,
       url: url,

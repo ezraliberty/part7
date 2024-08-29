@@ -1,5 +1,6 @@
 const blogRoutes = require("express").Router();
 const Blog = require("../models/blog");
+const Comment = require("../models/comment");
 const { userExtractor } = require("../utils/middleware");
 
 blogRoutes.get("/", async (request, response) => {
@@ -7,8 +8,8 @@ blogRoutes.get("/", async (request, response) => {
   response.json(blogs);
 });
 
-blogRoutes.get("/:id", async (request, response) => {
-  const blog = await Blog.findById(request.params.id);
+blogRoutes.get("/:id", userExtractor, async (request, response) => {
+  const blog = await Blog.findById(request.params.id).populate("user", {username: 1}).populate("comments", {comment: 1});
   response.json(blog);
 });
 
@@ -30,6 +31,21 @@ blogRoutes.post("/", userExtractor, async (request, response) => {
   await user.save();
 
   response.status(201).json(savedBlog);
+});
+
+blogRoutes.post("/:id/comments", userExtractor, async (request, response) => {
+  const body = request.body;
+  const blog = await Blog.findById(request.params.id);
+
+  const comment = new Comment({
+    comment: body.comment,
+  });
+
+  const savedComment = await comment.save();
+  blog.comments = blog.comments.concat(savedComment.id);
+  await blog.save();
+
+  response.status(201).json(savedComment);
 });
 
 blogRoutes.put("/:id", userExtractor, async (request, response) => {
