@@ -1,20 +1,16 @@
-import { useState, useRef } from 'react'
+import { useContext, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import NewBlog from './NewBlog'
 import Toggle from './Toggle'
-import {
-  getBlogs,
-  signin,
-  newBlogPost,
-  updateLikes,
-  deleter,
-  getUsers,
-} from '../services/requests'
+import { getBlogs, newBlogPost } from '../services/requests'
+import UserContext from '../UserContext'
+import { ListGroup } from 'react-bootstrap'
 
 const Blog = () => {
   const blogFormRef = useRef()
   const queryClient = useQueryClient()
+  const { user } = useContext(UserContext)
 
   const result = useQuery({
     queryKey: ['blogs'],
@@ -41,12 +37,15 @@ const Blog = () => {
       <Toggle buttonLabel="New Post" ref={blogFormRef}>
         <NewBlog newBlogMutation={newBlogMutation} />
       </Toggle>
-      {blogs
-        .map((blog) => (
-          <Link key={blog.id} to={`/blogs/${blog.id}`}>
-            {blog.title} {blog.author}
-          </Link>
+      <ListGroup>
+        {blogs.map((blog) => (
+          <ListGroup.Item key={blog.id}>
+            <Link to={`/blogs/${blog.id}`}>
+              {blog.title} {blog.author}
+            </Link>
+          </ListGroup.Item>
         ))}
+      </ListGroup>
     </div>
   )
 }

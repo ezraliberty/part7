@@ -7,11 +7,6 @@ import UserContext from '../UserContext'
 
 const User = () => {
   const { user } = useContext(UserContext)
-  if (!user) {
-    return null
-  }
-
-  
   const { id } = useParams()
 
   const userResult = useQuery({
@@ -22,8 +17,6 @@ const User = () => {
   if (userResult.isLoading) {
     return <div>Incoming Data....</div>
   }
-
-  
 
   const userData = userResult.data
 

@@ -87,7 +87,7 @@ const SingleBlog = () => {
             like
           </button>
         </p>
-        <p>{blog.author}</p>
+        <p>Added By {blog.author}</p>
         {displayRemoveButton && <button onClick={() => remove(id)}>remove</button>}
       </div>
       {blog.comments && (
