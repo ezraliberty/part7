@@ -1,8 +1,17 @@
+import { useContext } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { getUser } from '../services/requests'
 import { useParams } from 'react-router-dom'
+import UserContext from '../UserContext'
+
 
 const User = () => {
+  const { user } = useContext(UserContext)
+  if (!user) {
+    return null
+  }
+
+  
   const { id } = useParams()
 
   const userResult = useQuery({
@@ -14,13 +23,15 @@ const User = () => {
     return <div>Incoming Data....</div>
   }
 
-  const user = userResult.data
+  
+
+  const userData = userResult.data
 
   return (
     <div>
-      <h2>{user.name}</h2>
+      <h2>{userData.name}</h2>
       <h3>Added blogs</h3>
-      <ul>{user.blogs.map(blog => <li key={blog.id}>{blog.title}</li>)}</ul>
+      <ul>{userData.blogs.map(blog => <li key={blog.id}>{blog.title}</li>)}</ul>
     </div>
   )
 }

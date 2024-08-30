@@ -1,43 +1,52 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { Link } from 'react-router-dom'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import NewBlog from './NewBlog'
+import Toggle from './Toggle'
+import {
+  getBlogs,
+  signin,
+  newBlogPost,
+  updateLikes,
+  deleter,
+  getUsers,
+} from '../services/requests'
 
-const Blog = ({ blog, remove, addLikes, user, id }) => {
-  const [view, setView] = useState(false)
+const Blog = () => {
+  const blogFormRef = useRef()
+  const queryClient = useQueryClient()
 
-  const hideDetails = { display: view ? 'none' : '' }
-  const showDetails = { display: view ? '' : 'none' }
+  const result = useQuery({
+    queryKey: ['blogs'],
+    queryFn: getBlogs,
+  })
 
-  const toggler = () => {
-    setView(!view)
+  const newBlogMutation = useMutation({
+    mutationFn: newBlogPost,
+    onSuccess: (createBlog) => {
+      const blogs = queryClient.getQueryData(['blogs'])
+      queryClient.setQueryData(['blogs'], blogs.concat(createBlog))
+    },
+  })
+
+  if (result.isLoading) {
+    return <div>Incoming Data....</div>
   }
 
-  const displayRemoveButton = blog.user.username === user
+  const blogs = result.data
 
   return (
     <div>
-      <div style={hideDetails} className="first">
-        <Link to={`/blogs/${id}`}>
-          {blog.title} {blog.author}
-        </Link>
-      </div>
-      {/* <div style={showDetails} className="second">
-
-      <button onClick={toggler} id="view">
-            view
-          </button>
-        <p>
-          {blog.title} <button onClick={toggler}>hide</button>
-        </p>
-        <p>{blog.url}</p>
-        <p>
-          {blog.likes}{" "}
-          <button onClick={() => addLikes(blog.id)} id="like">
-            like
-          </button>
-        </p>
-        <p>{blog.author}</p>
-        {displayRemoveButton && <button onClick={remove}>remove</button>}
-      </div> */}
+      <h2>blog app</h2>
+      <Toggle buttonLabel="New Post" ref={blogFormRef}>
+        <NewBlog newBlogMutation={newBlogMutation} />
+      </Toggle>
+      {blogs
+        .map((blog) => (
+          <Link key={blog.id} to={`/blogs/${blog.id}`}>
+            {blog.title} {blog.author}
+          </Link>
+        ))}
     </div>
   )
 }
