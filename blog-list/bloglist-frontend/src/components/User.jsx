@@ -1,12 +1,9 @@
-import { useContext } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { getUser } from '../services/requests'
 import { useParams } from 'react-router-dom'
-import UserContext from '../UserContext'
 
 
 const User = () => {
-  const { user } = useContext(UserContext)
   const { id } = useParams()
 
   const userResult = useQuery({
