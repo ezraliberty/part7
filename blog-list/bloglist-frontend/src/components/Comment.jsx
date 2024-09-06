@@ -1,6 +1,4 @@
-import { useEffect, useState } from 'react'
-import { addComment } from '../services/requests'
-
+import { useState } from 'react'
 
 const Comment = ({ id, comments, addCommentMutation }) => {
   const [comment, setComment] = useState('')
